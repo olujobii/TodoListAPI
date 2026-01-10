@@ -22,7 +22,7 @@ public class TaskService {
     }
 
     public Task saveTaskList(Task task){
-        if(task.getTitle().isEmpty() || task.getDescription().isEmpty())
+        if(( task.getTitle() == null || task.getTitle().isBlank()) || (task.getDescription() == null || task.getDescription().isBlank()))
             return null;
 
         taskRepository.save(task);
@@ -41,7 +41,7 @@ public class TaskService {
     public Task updateSpecificTask(int id, Task task){
         List<Task> taskList = taskRepository.getTaskList();
 
-        if(task.getTitle().isEmpty() || task.getDescription().isEmpty())
+        if(( task.getTitle() == null || task.getTitle().isBlank()) || (task.getDescription() == null || task.getDescription().isBlank()))
             return null;
 
         if(id < 1 || id > taskList.size())
