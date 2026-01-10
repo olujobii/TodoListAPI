@@ -3,6 +3,7 @@ package com.olujobii.tasktrackerapi.controller;
 import com.olujobii.tasktrackerapi.entity.Task;
 import com.olujobii.tasktrackerapi.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,42 +20,42 @@ public class TaskController {
     }
 
     @GetMapping("")
-    public List<Task> getTasksList(){
-        return taskService.getTaskList();
+    public ResponseEntity<List<Task>> getTasksList(){
+        return ResponseEntity.ok(taskService.getTaskList());
     }
 
     @GetMapping("/{id}")
-    public Task getTaskId(@PathVariable int id){
-        return taskService.getSpecificTask(id);
-        /* With return null for this GET method, even if I input an id that is not valid,
-        it still returns HTTP status of 200?
-        */
+    public ResponseEntity<Task> getTaskId(@PathVariable int id){
+        Task task = taskService.getSpecificTask(id);
+         if(task == null)
+             return ResponseEntity.notFound().build();
+
+         return ResponseEntity.ok(task);
     }
 
     @PostMapping("")
-    public Task saveTasksList(@RequestBody Task task){
-        return taskService.saveTaskList(task);
-        /* With return null for this POST method, if I do not input complete request body,
-            it gives HTTP status of 500, should that be or should it not be 404?
-        */
+    public ResponseEntity<Task> saveTasksList(@RequestBody Task task){
+        Task newTask = taskService.saveTaskList(task);
+        if(newTask == null)
+            return ResponseEntity.badRequest().build();
+
+        return ResponseEntity.status(201).body(newTask);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable int id, @RequestBody Task task){
-        return taskService.updateSpecificTask(id,task);
-        /* With return null for this POST method, if I do not input complete request body,
-            it gives HTTP status of 500, should that be or should it not be 404?
+    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task task){
+        Task updatedTask = taskService.updateSpecificTask(id,task);
+        if(updatedTask == null)
+            return ResponseEntity.badRequest().build();
 
-           ANSWER
-           Spring has built-in exception handling that catches unhandled exception in
-           controller.
-           Spring will most likely return error 500 when it catches an unhandled exception in
-           controller
-        */
+        return ResponseEntity.ok(updatedTask);
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteTask(@PathVariable int id){
-        return taskService.deleteSpecificTask(id);
+    public ResponseEntity<Task> deleteTask(@PathVariable int id){
+        if(!taskService.deleteSpecificTask(id))
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.noContent().build();
     }
 }
