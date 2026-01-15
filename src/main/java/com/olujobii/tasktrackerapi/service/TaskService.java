@@ -23,11 +23,7 @@ public class TaskService {
     }
 
     public Task saveTaskList(Task task){
-        if(( task.getTitle() == null || task.getTitle().trim().isBlank()))
-            throw new InvalidTaskDataException("title field cannot be empty");
-
-        if(task.getDescription() == null || task.getDescription().trim().isBlank())
-            throw new InvalidTaskDataException("description field cannot be empty");
+        handleTaskDataValidation(task);
 
         taskRepository.save(task);
         return task;
@@ -45,8 +41,7 @@ public class TaskService {
     public Task updateSpecificTask(int id, Task task){
         List<Task> taskList = taskRepository.getTaskList();
 
-        if(( task.getTitle() == null || task.getTitle().isBlank()) || (task.getDescription() == null || task.getDescription().isBlank()))
-            return null;
+        handleTaskDataValidation(task);
 
         if(id < 1 || id > taskList.size())
             return null;
@@ -66,5 +61,17 @@ public class TaskService {
 
         taskRepository.delete(id);
         return true;
+    }
+
+    public void handleTaskDataValidation(Task task){
+        if(( task.getTitle() == null || task.getTitle().isBlank()))
+            throw new InvalidTaskDataException("title field cannot be empty");
+
+        if(task.getDescription() == null || task.getDescription().isBlank())
+            throw new InvalidTaskDataException("description field cannot be empty");
+
+        //TRIM TO REMOVE UNNECESSARY WHITESPACE
+        task.setTitle(task.getTitle().trim());
+        task.setDescription(task.getDescription().trim());
     }
 }
