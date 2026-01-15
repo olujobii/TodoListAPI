@@ -42,11 +42,9 @@ public class TaskService {
     public Task updateSpecificTask(int id, Task task){
         List<Task> taskList = taskRepository.getTaskList();
 
+        handleTaskDataValidation(task);
         if(id < 1 || id > taskList.size())
             throw new ResourceNotFoundException("Task not found");
-
-        handleTaskDataValidation(task);
-
 
         int index = id - 1;
         Task specificTask = taskList.get(index);
@@ -54,7 +52,6 @@ public class TaskService {
         //SETTING TASK WITH UPDATED TASK TITLE AND DESCRIPTION
         specificTask.setTitle(task.getTitle());
         specificTask.setDescription(task.getDescription());
-
         return specificTask;
     }
 
