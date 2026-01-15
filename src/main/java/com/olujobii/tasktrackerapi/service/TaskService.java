@@ -2,6 +2,7 @@ package com.olujobii.tasktrackerapi.service;
 
 import com.olujobii.tasktrackerapi.entity.Task;
 import com.olujobii.tasktrackerapi.exception.InvalidTaskDataException;
+import com.olujobii.tasktrackerapi.exception.ResourceNotFoundException;
 import com.olujobii.tasktrackerapi.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class TaskService {
     public Task getSpecificTask(int id){
         List<Task> taskList = taskRepository.getTaskList();
         if(id < 1 || id > taskList.size())
-            return null;
+            throw new ResourceNotFoundException("Task not found");
 
         int index = id - 1;
         return taskList.get(index);
@@ -41,26 +42,27 @@ public class TaskService {
     public Task updateSpecificTask(int id, Task task){
         List<Task> taskList = taskRepository.getTaskList();
 
+        if(id < 1 || id > taskList.size())
+            throw new ResourceNotFoundException("Task not found");
+
         handleTaskDataValidation(task);
 
-        if(id < 1 || id > taskList.size())
-            return null;
 
         int index = id - 1;
         Task specificTask = taskList.get(index);
 
+        //SETTING TASK WITH UPDATED TASK TITLE AND DESCRIPTION
         specificTask.setTitle(task.getTitle());
         specificTask.setDescription(task.getDescription());
 
         return specificTask;
     }
 
-    public boolean deleteSpecificTask(int id){
+    public void deleteSpecificTask(int id){
         if(id < 1 || id > taskRepository.getTaskList().size())
-            return false;
+            throw new ResourceNotFoundException("Task not found");
 
         taskRepository.delete(id);
-        return true;
     }
 
     public void handleTaskDataValidation(Task task){
