@@ -1,6 +1,7 @@
 package com.olujobii.tasktrackerapi.service;
 
 import com.olujobii.tasktrackerapi.entity.Task;
+import com.olujobii.tasktrackerapi.exception.InvalidTaskDataException;
 import com.olujobii.tasktrackerapi.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,11 @@ public class TaskService {
     }
 
     public Task saveTaskList(Task task){
-        if(( task.getTitle() == null || task.getTitle().isBlank()) || (task.getDescription() == null || task.getDescription().isBlank()))
-            return null;
+        if(( task.getTitle() == null || task.getTitle().trim().isBlank()))
+            throw new InvalidTaskDataException("title field cannot be empty");
+
+        if(task.getDescription() == null || task.getDescription().trim().isBlank())
+            throw new InvalidTaskDataException("description field cannot be empty");
 
         taskRepository.save(task);
         return task;
