@@ -20,7 +20,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<Task> getTasksList(){
         return taskService.getTaskList();
     }
@@ -31,7 +31,7 @@ public class TaskController {
          return ResponseEntity.ok(task);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Task> saveTasksList(@RequestBody Task task){
         Task newTask = taskService.saveTaskList(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
@@ -40,11 +40,11 @@ public class TaskController {
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task task){
         Task updatedTask = taskService.updateSpecificTask(id,task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedTask);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedTask);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Task> deleteTask(@PathVariable int id){
+    public ResponseEntity<Void> deleteTask(@PathVariable int id){
         taskService.deleteSpecificTask(id);
         return ResponseEntity.noContent().build();
     }
