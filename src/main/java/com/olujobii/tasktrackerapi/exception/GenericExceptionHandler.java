@@ -19,15 +19,16 @@ public class GenericExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException ex){
-        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponseDTO(LocalDateTime.now(),HttpStatus.NOT_FOUND,
-                        "An unexpected error occurred"));
+                .body(new ErrorResponseDTO(LocalDateTime.now(),HttpStatus.NOT_FOUND,ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleAllErrors(Exception ex){
+        ex.printStackTrace();
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponseDTO(LocalDateTime.now(),HttpStatus.INTERNAL_SERVER_ERROR,ex.getMessage()));
+                .body(new ErrorResponseDTO(LocalDateTime.now(),HttpStatus.INTERNAL_SERVER_ERROR,
+                        "An unexpected error occurred"));
     }
 }
